@@ -1,0 +1,6 @@
+apiVersion: group.test.org/v1
+kind: RouterConfig
+metadata:
+  name: routerconfig-sample
+spec:
+  # TODO(user): Add fields here

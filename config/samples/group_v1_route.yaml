@@ -1,0 +1,6 @@
+apiVersion: group.test.org/v1
+kind: Route
+metadata:
+  name: route-sample
+spec:
+  # TODO(user): Add fields here

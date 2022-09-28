@@ -1,0 +1,28 @@
+domain: test.org
+layout:
+- go.kubebuilder.io/v3
+plugins:
+  manifests.sdk.operatorframework.io/v2: {}
+  scorecard.sdk.operatorframework.io/v2: {}
+projectName: operator-demo
+repo: github.com/gprossliner/operator-demo
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: test.org
+  group: group
+  kind: RouterConfig
+  path: github.com/gprossliner/operator-demo/api/v1
+  version: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: test.org
+  group: group
+  kind: Route
+  path: github.com/gprossliner/operator-demo/api/v1
+  version: v1
+version: "3"

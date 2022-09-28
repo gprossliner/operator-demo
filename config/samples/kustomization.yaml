@@ -1,0 +1,5 @@
+## Append samples you want in your CSV to this file as resources ##
+resources:
+- group_v1_routerconfig.yaml
+- group_v1_route.yaml
+#+kubebuilder:scaffold:manifestskustomizesamples
