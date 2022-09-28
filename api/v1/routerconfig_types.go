@@ -42,6 +42,16 @@ type RouterConfigStatus struct {
 
 	// Conditions represent the latest available observations of an object's state
 	Conditions []metav1.Condition `json:"conditions"`
+
+	// Routes is a list of all known routes.
+	// This is updates by the Route-Controller
+	Routes []RouteReference `json:"routes,omitempty"`
+}
+
+// RouteReference represents a single route for the RouterConfig
+type RouteReference struct {
+	Namespace string `json:"namespace"`
+	Name      string `json:"name"`
 }
 
 //+kubebuilder:object:root=true

@@ -71,6 +71,35 @@ func (r *RouteReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 
 	log.Info(fmt.Sprintf("-> GET Route ResourceVersion=%s", route.ObjectMeta.ResourceVersion))
 
+	// find the corresponding RouterConfig
+	routerConfigs := &groupv1.RouterConfigList{}
+	log.Info(fmt.Sprintf("<- LIST RouterConfig"))
+	err = r.List(ctx, routerConfigs)
+
+	for _, routerConfig := range routerConfigs.Items {
+		log.Info(fmt.Sprintf("-> LIST ITEM RouterConfig ResourceVersion=%s", routerConfig.ObjectMeta.ResourceVersion))
+		if routerConfig.Spec.RouterConfigName == route.Spec.RouterConfigName {
+			// got the correct routerConfig, let's update the routes
+			setRoute(&routerConfig.Status, route)
+
+			log.Info(fmt.Sprintf("<- POST STATUS RouterConfig ResourceVersion=%s", routerConfig.ObjectMeta.ResourceVersion))
+			err = r.Status().Update(ctx, &routerConfig)
+			if err != nil {
+				log.Error(err, "-> POST RouteConfig")
+			} else {
+				log.Info(fmt.Sprintf("-> POST STATUS Route ResourceVersion=%s", routerConfig.ObjectMeta.ResourceVersion))
+			}
+
+			// set another condition to show we had configured the RouterConfig
+			meta.SetStatusCondition(&route.Status.Conditions, metav1.Condition{
+				Type:    "configok",
+				Status:  metav1.ConditionTrue,
+				Reason:  "done",
+				Message: "RouterConfig associated",
+			})
+		}
+	}
+
 	// we just update some condition here
 	meta.SetStatusCondition(&route.Status.Conditions, metav1.Condition{
 		Type:    "reconciled",
@@ -95,4 +124,21 @@ func (r *RouteReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&groupv1.Route{}).
 		Complete(r)
+}
+
+func setRoute(status *groupv1.RouterConfigStatus, route *groupv1.Route) {
+
+	myref := groupv1.RouteReference{
+		Namespace: route.Namespace,
+		Name:      route.Name,
+	}
+
+	for _, ref := range status.Routes {
+		if ref == myref {
+			return
+		}
+	}
+
+	status.Routes = append(status.Routes, myref)
+	return
 }

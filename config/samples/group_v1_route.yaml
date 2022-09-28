@@ -10,11 +10,11 @@ kind: Route
 metadata:
   name: route-sample2
 spec:
-  routerConfigName: config2
+  routerConfigName: config1
 ---
 apiVersion: group.test.org/v1
 kind: Route
 metadata:
   name: route-sample3
 spec:
-  routerConfigName: config3
+  routerConfigName: config1

@@ -117,6 +117,21 @@ spec:
                   - type
                   type: object
                 type: array
+              routes:
+                description: Routes is a list of all known routes. This is updates
+                  by the Route-Controller
+                items:
+                  description: RouteReference represents a single route for the RouterConfig
+                  properties:
+                    name:
+                      type: string
+                    namespace:
+                      type: string
+                  required:
+                  - name
+                  - namespace
+                  type: object
+                type: array
             required:
             - conditions
             type: object
