@@ -30,12 +30,18 @@ type RouteSpec struct {
 
 	// Foo is an example field of Route. Edit route_types.go to remove/update
 	Foo string `json:"foo,omitempty"`
+
+	// RouterConfigName is the name of the corresponding RouterConfig.
+	RouterConfigName string `json:"routerConfigName,omitempty"`
 }
 
 // RouteStatus defines the observed state of Route
 type RouteStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
+
+	// Conditions represent the latest available observations of an object's state
+	Conditions []metav1.Condition `json:"conditions"`
 }
 
 //+kubebuilder:object:root=true

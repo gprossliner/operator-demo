@@ -18,13 +18,18 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 
+	"k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	groupv1 "github.com/gprossliner/operator-demo/api/v1"
+
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	ctrllog "sigs.k8s.io/controller-runtime/pkg/log"
 )
 
 // RouteReconciler reconciles a Route object
@@ -47,9 +52,40 @@ type RouteReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.12.2/pkg/reconcile
 func (r *RouteReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
 
-	// TODO(user): your logic here
+	log := ctrllog.FromContext(ctx)
+	log.Info("Reconcile Route")
+
+	route := &groupv1.Route{}
+	log.Info(fmt.Sprintf("<- GET Route"))
+	err := r.Get(ctx, req.NamespacedName, route)
+	if err != nil {
+		if errors.IsNotFound(err) {
+			log.Info("Route resource not found. Ignoring since object must be deleted")
+			return ctrl.Result{}, nil
+		}
+		// Error reading the object - requeue the request.
+		log.Error(err, "Failed to get Route")
+		return ctrl.Result{}, err
+	}
+
+	log.Info(fmt.Sprintf("-> GET Route ResourceVersion=%s", route.ObjectMeta.ResourceVersion))
+
+	// we just update some condition here
+	meta.SetStatusCondition(&route.Status.Conditions, metav1.Condition{
+		Type:    "reconciled",
+		Status:  metav1.ConditionTrue,
+		Reason:  "done",
+		Message: "reconciliation done",
+	})
+
+	log.Info(fmt.Sprintf("<- POST STATUS Route ResourceVersion=%s", route.ObjectMeta.ResourceVersion))
+	err = r.Status().Update(ctx, route)
+	if err != nil {
+		log.Error(err, "-> POST STATUS RouteConfig")
+	} else {
+		log.Info(fmt.Sprintf("-> POST STATUS Route ResourceVersion=%s", route.ObjectMeta.ResourceVersion))
+	}
 
 	return ctrl.Result{}, nil
 }

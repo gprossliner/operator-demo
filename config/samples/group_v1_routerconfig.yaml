@@ -3,4 +3,4 @@ kind: RouterConfig
 metadata:
   name: routerconfig-sample
 spec:
-  # TODO(user): Add fields here
+  routerConfigName: config1

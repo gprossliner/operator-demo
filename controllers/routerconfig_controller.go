@@ -18,13 +18,18 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 
+	"k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	groupv1 "github.com/gprossliner/operator-demo/api/v1"
+
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	ctrllog "sigs.k8s.io/controller-runtime/pkg/log"
 )
 
 // RouterConfigReconciler reconciles a RouterConfig object
@@ -47,9 +52,40 @@ type RouterConfigReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.12.2/pkg/reconcile
 func (r *RouterConfigReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	log := ctrllog.FromContext(ctx)
+	log.Info("Reconcile RouteConfig")
 
-	// TODO(user): your logic here
+	routeConfig := &groupv1.RouterConfig{}
+	log.Info(fmt.Sprintf("<- GET RouteConfig"))
+	err := r.Get(ctx, req.NamespacedName, routeConfig)
+	if err != nil {
+		if errors.IsNotFound(err) {
+			log.Info("RouteConfig resource not found. Ignoring since object must be deleted")
+			return ctrl.Result{}, nil
+		}
+		// Error reading the object - requeue the request.
+		log.Error(err, "Failed to get RouteConfig")
+		return ctrl.Result{}, err
+	}
+
+	log.Info(fmt.Sprintf("-> GET RouteConfig ResourceVersion=%s", routeConfig.ObjectMeta.ResourceVersion))
+
+	// we just update some condition here
+	meta.SetStatusCondition(&routeConfig.Status.Conditions, metav1.Condition{
+		Type:    "reconciled",
+		Status:  metav1.ConditionTrue,
+		Reason:  "done",
+		Message: "reconciliation done",
+	})
+
+	log.Info(fmt.Sprintf("<- POST STATUS RouteConfig ResourceVersion=%s", routeConfig.ObjectMeta.ResourceVersion))
+	err = r.Status().Update(ctx, routeConfig)
+	if err != nil {
+		log.Error(err, "-> POST STATUS RouteConfig")
+	} else {
+		log.Info(fmt.Sprintf("-> POST STATUS RouteConfig ResourceVersion=%s", routeConfig.ObjectMeta.ResourceVersion))
+
+	}
 
 	return ctrl.Result{}, nil
 }

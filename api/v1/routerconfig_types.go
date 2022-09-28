@@ -30,12 +30,18 @@ type RouterConfigSpec struct {
 
 	// Foo is an example field of RouterConfig. Edit routerconfig_types.go to remove/update
 	Foo string `json:"foo,omitempty"`
+
+	// RouterConfigName is the name of the RouterConfig. There can be 0:n Routes associated with this config
+	RouterConfigName string `json:"routerConfigName,omitempty"`
 }
 
 // RouterConfigStatus defines the observed state of RouterConfig
 type RouterConfigStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
+
+	// Conditions represent the latest available observations of an object's state
+	Conditions []metav1.Condition `json:"conditions"`
 }
 
 //+kubebuilder:object:root=true

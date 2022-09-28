@@ -1,0 +1,59 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: manager-role
+rules:
+- apiGroups:
+  - group.test.org
+  resources:
+  - routerconfigs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - group.test.org
+  resources:
+  - routerconfigs/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - group.test.org
+  resources:
+  - routerconfigs/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - group.test.org
+  resources:
+  - routes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - group.test.org
+  resources:
+  - routes/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - group.test.org
+  resources:
+  - routes/status
+  verbs:
+  - get
+  - patch
+  - update
