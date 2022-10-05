@@ -19,6 +19,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"math/rand"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
@@ -117,6 +118,7 @@ func (r *RouteReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	}
 
 	return ctrl.Result{}, nil
+
 }
 
 // SetupWithManager sets up the controller with the Manager.
@@ -131,10 +133,12 @@ func setRoute(status *groupv1.RouterConfigStatus, route *groupv1.Route) {
 	myref := groupv1.RouteReference{
 		Namespace: route.Namespace,
 		Name:      route.Name,
+		Token:     rand.Intn(100),
 	}
 
 	for _, ref := range status.Routes {
-		if ref == myref {
+		if ref.Namespace == myref.Namespace && ref.Name == myref.Name {
+			ref.Token = myref.Token
 			return
 		}
 	}

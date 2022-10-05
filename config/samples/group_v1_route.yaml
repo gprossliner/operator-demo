@@ -18,3 +18,10 @@ metadata:
   name: route-sample3
 spec:
   routerConfigName: config1
+---
+apiVersion: group.test.org/v1
+kind: Route
+metadata:
+  name: route-sample4
+spec:
+  routerConfigName: config1

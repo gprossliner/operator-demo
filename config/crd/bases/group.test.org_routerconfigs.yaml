@@ -127,9 +127,12 @@ spec:
                       type: string
                     namespace:
                       type: string
+                    token:
+                      type: integer
                   required:
                   - name
                   - namespace
+                  - token
                   type: object
                 type: array
             required:

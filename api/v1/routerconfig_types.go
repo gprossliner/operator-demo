@@ -52,6 +52,7 @@ type RouterConfigStatus struct {
 type RouteReference struct {
 	Namespace string `json:"namespace"`
 	Name      string `json:"name"`
+	Token     int    `json:"token"`
 }
 
 //+kubebuilder:object:root=true
