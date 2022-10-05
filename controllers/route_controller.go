@@ -136,9 +136,9 @@ func setRoute(status *groupv1.RouterConfigStatus, route *groupv1.Route) {
 		Token:     rand.Intn(100),
 	}
 
-	for _, ref := range status.Routes {
+	for i, ref := range status.Routes {
 		if ref.Namespace == myref.Namespace && ref.Name == myref.Name {
-			ref.Token = myref.Token
+			status.Routes[i].Token = myref.Token
 			return
 		}
 	}
