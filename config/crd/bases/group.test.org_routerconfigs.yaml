@@ -127,12 +127,12 @@ spec:
                       type: string
                     namespace:
                       type: string
-                    token:
+                    observedGeneration:
+                      format: int64
                       type: integer
                   required:
                   - name
                   - namespace
-                  - token
                   type: object
                 type: array
             required:

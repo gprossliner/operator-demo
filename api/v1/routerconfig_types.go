@@ -50,9 +50,9 @@ type RouterConfigStatus struct {
 
 // RouteReference represents a single route for the RouterConfig
 type RouteReference struct {
-	Namespace string `json:"namespace"`
-	Name      string `json:"name"`
-	Token     int    `json:"token"`
+	Namespace          string `json:"namespace"`
+	Name               string `json:"name"`
+	ObservedGeneration int64  `json:"observedGeneration,omitempty"`
 }
 
 //+kubebuilder:object:root=true
